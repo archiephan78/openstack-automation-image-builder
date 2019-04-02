@@ -1,0 +1,90 @@
+---
+- name: config ifup@.service boot delay
+  copy: 
+    src: "ifup@.service"
+    dest: "/lib/systemd/system/ifup@.service"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: remove Requires=networking.service from cloud-init service
+  copy:
+    src: "cloud-init.service"
+    dest: "/lib/systemd/system/cloud-init.service"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: config file sshd_config
+  copy: 
+    src: "sshd_config"
+    dest: "/etc/ssh/sshd_config"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: config /etc/network/interfaces
+  template:
+    src: "interfaces"
+    dest: "/etc/network/interfaces"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: remove udev network rules and i386 arch packages
+  file: 
+    path: "{{ item }}" 
+    state: absent
+  with_items: "{{ removed_files }}"
+
+- name: load modules for PCI hot plug
+  modprobe: 
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ pci_modules }}"
+  ignore_errors: True
+
+- name: config /etc/fstab
+  copy: 
+    src: "fstab"
+    dest: "/etc/fstab"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: set label for root-disk
+  command: "e2label /dev/vda1 cloudimg-rootfs"
+
+- name: config /etc/default/grub
+  copy: 
+    src: "grub"
+    dest: "/etc/default/grub"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - update grub
+
+- name: set timezone Asia/Ho_Chi_Minh
+  copy: 
+    content: "Asia/Ho_Chi_Minh"
+    dest: "/etc/timezone"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - update timezone
+
+- name: config /etc/rc.local
+  template: 
+    src: "rc.local"
+    dest: "/etc/rc.local"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Set timeout dhcp v6
+  copy:
+    src: dhclient.conf
+    dest: /etc/dhcp/dhclient.conf
+  when: ipv6_enabled == True

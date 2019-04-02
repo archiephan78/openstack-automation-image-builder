@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  sudo: yes
+  gather_facts: yes
+  vars:
+    - autoroute_enabled: True
+    - ipv6_enabled: True
+  roles:
+    - ubuntu_1804

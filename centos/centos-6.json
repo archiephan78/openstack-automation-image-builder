@@ -1,0 +1,46 @@
+{
+    "variables": {
+        "user": "root",
+        "password": "rootcloud",
+        "disk_size": "3500"
+    },
+
+    "builders":
+    [
+        {
+            "name": "centos-6",
+
+            "type": "qemu",
+            "qemuargs": [
+                ["-m", "1024M"]
+            ],
+            "format": "raw",
+            "accelerator": "kvm",
+            "disk_size": "{{ user `disk_size`}}",
+
+            "iso_url": "isos/CentOS-6.9-x86_64-minimal.iso",
+            "iso_checksum": "af4a1640c0c6f348c6c41f1ea9e192a2",
+            "iso_checksum_type": "md5",
+
+            "http_directory": "http",
+
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "init 0",
+
+            "boot_wait": "5s",
+            "boot_command": [
+                "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks_6.cfg<enter><wait>"
+            ]
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "{{.Vars}} bash '{{.Path}}'",
+            "script": "scripts/setup_6.sh"
+        }
+    ]
+}

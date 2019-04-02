@@ -1,0 +1,8 @@
+TYPE="Ethernet"
+DEVICE="eth1"
+ONBOOT="yes"
+BOOTPROTO="dhcp"
+{% if ipv6_enabled %}
+IPV6INIT=yes
+DHCPV6C=yes
+{% endif %}

@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  gather_facts: yes
+  vars:
+    - autoroute_enabled: True
+    - ipv6_enabled: True
+  roles:
+    - centos_7

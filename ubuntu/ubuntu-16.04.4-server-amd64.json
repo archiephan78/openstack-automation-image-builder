@@ -1,0 +1,61 @@
+{
+    "variables": {
+        "user": "ubuntu",
+        "password": "ubuntucloud",
+        "disk_size": "2000"
+    },
+
+    "builders":
+    [
+        {
+            "name": "ubuntu-1604-server",
+
+            "type": "qemu",
+            "headless": true,
+            "format": "raw",
+            "accelerator": "kvm",
+            "disk_size": "{{ user `disk_size`}}",
+
+            "iso_url": "isos/ubuntu-16.04.4-server-amd64.iso",
+            "iso_checksum": "6a7f31eb125a0b2908cf2333d7777c82",
+            "iso_checksum_type": "md5",
+
+            "http_directory": "http",
+
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+
+            "boot_wait": "5s",
+            "boot_command": [
+                "<enter><wait>",
+                "<f6><esc>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+                "<bs><bs><bs>",
+                "/install/vmlinuz ",
+                "initrd=/install/initrd.gz ",
+                "auto=true ",
+                "priority=critical ",
+                "net.ifnames=0 ",
+                "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed_1604.cfg",
+                "<wait><enter>"
+            ]
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+            "script": "scripts/setup_1604.sh"
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+---
+
+cloud_init_packages:
+  - cloud-init
+  - cloud-utils-growpart
+  - cloud-utils
+
+cloud_init_files:
+  - src: cloud.cfg
+    dest: /etc/cloud/cloud.cfg
+
+failsafe_file:
+  - src: failsafe.conf
+    dest: /etc/init/failsafe.conf
+
+interfaces_file:
+  - src: ifcfg-eth0
+    dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+  - src: ifcfg-eth1
+    dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+
+rc_local_file:
+  - src: rc.local
+    dest: /etc/rc.d/rc.local
+
+fstab_file: /etc/fstab
+
+timezone_config:
+  - src: /usr/share/zoneinfo/Asia/Ho_Chi_Minh
+    dest: /etc/localtime
+
+removed_files:
+  - /etc/udev/rules.d/70-persistent-net.rules
+  - /lib/udev/write_net_rules
+
+sshd_file:
+  - src: sshd_config
+    dest: /etc/ssh/sshd_config
+
+no_zero_config:
+  - dest: /etc/sysconfig/network
+    line: 'NOZEROCONF=yes'
+
+grub_file: /boot/grub/grub.conf
+
+selinux_config:
+  - dest: /etc/selinux/config
+    line: 'SELINUX=disabled'
+
+
+support_packages:
+  - vim
+  - curl
+  - qemu-guest-agent
+  - python-configobj
+  - python-setuptools
+  - acpid
+
+removed_packages:
+  - git
+
+ipv6_enabled: True

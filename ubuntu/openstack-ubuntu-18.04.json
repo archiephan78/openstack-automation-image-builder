@@ -1,0 +1,48 @@
+{
+    "variables": {
+        "user": "root"
+    },
+
+    "builders": [{
+        "name": "ubuntu-18.05",
+        "type": "openstack",
+        "image_name": "Ubuntu-18.05x64@2019-03-15",
+
+        "insecure": true,
+        "source_image": "xxxxx",
+        "flavor": "xxxxx",
+        "availability_zone": "nova",
+        "domain_name": "Default",
+        "tenant_name": "xxxxx",
+        "region": "xxxxxx",
+        "security_groups": ["xxxxxx"],
+        "networks": ["xxxxxxx"],
+        "ssh_username": "root"
+    }],
+
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "ansible",
+            "destination": "/tmp/packer-provisioner-ansible-local"
+        },
+        {
+            "type": "shell",
+            "execute_command": "{{.Vars}} bash '{{.Path}}'",
+            "scripts": [
+                "scripts/update_1804.sh"
+            ]
+        },
+        {
+            "type": "ansible-local",
+            "playbook_dir": "ansible",
+            "inventory_file": "ansible/hosts",
+            "playbook_file": "ansible/ubuntu_1804.yml"
+        },
+        {
+            "type": "shell",
+            "execute_command": "{{.Vars}} bash '{{.Path}}'",
+            "script": "scripts/clean_1804.sh"
+        }
+    ]
+}

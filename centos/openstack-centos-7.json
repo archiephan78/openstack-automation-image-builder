@@ -1,0 +1,48 @@
+{
+    "variables": {
+        "user": "root"
+    },
+
+    "builders": [{
+        "name": "centos-7",
+        "type": "openstack",
+        "image_name": "CentOS-7.5x64@2019-12-03",
+
+        "insecure": true,
+        "source_image": "xxxxx-xxxx-xxxxx-xxxx-xxxx",
+        "flavor": "-xxxx-xxxxx-xxxxx-xxxx-xxxxx-xxxx",
+        "availability_zone": "nova",
+        "domain_name": "Default",
+        "security_groups": ["xxxxx-xxxxx-xxxxx-xxxx-xxx"],
+        "networks": ["xxxx-xxxxx-xxxxx-xxxx-xxxx"],
+        "tenant_name": "xxxx",
+        "region": "xxxxx",
+        "ssh_username": "root"
+    }],
+
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "ansible",
+            "destination": "/tmp/packer-provisioner-ansible-local"
+        },
+        {
+            "type": "shell",
+            "execute_command": "{{.Vars}} bash '{{.Path}}'",
+            "scripts": [
+                "scripts/update_7.sh"
+            ]
+        },
+        {
+            "type": "ansible-local",
+            "playbook_dir": "ansible",
+            "inventory_file": "ansible/hosts",
+            "playbook_file": "ansible/centos_7.yml"
+        },
+        {
+            "type": "shell",
+            "execute_command": "{{.Vars}} bash '{{.Path}}'",
+            "script": "scripts/clean_7.sh"
+        }
+    ]
+}

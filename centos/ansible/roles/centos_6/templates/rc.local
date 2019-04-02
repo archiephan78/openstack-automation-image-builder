@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+{% if autoroute_enabled %}
+/opt/auto_route.sh
+{% endif %}
+
+echo "127.0.0.1 localhost" > /etc/hosts #rclocal
+echo "127.0.1.1 localhost" >> /etc/hosts #rclocal
+if [ $(/sbin/ifconfig eth0 | grep "inet addr:" | cut -d: -f2|cut -dB -f1) != "" ] #rclocal
+then #rclocal
+/bin/sed -i "/127.0.1.1/c\127.0.1.1 $(hostname) localhost\n$(/sbin/ifconfig eth0 | grep "inet addr:" | cut -d: -f2|cut -dB -f1) $(hostname) localhost" /etc/hosts #rclocal
+fi #rclocal
+sed -i "/HOSTNAME/c\HOSTNAME=$(hostname)" /etc/sysconfig/network #rclocal
+sed -i "/DHCP_HOSTNAME/c\DHCP_HOSTNAME="$(hostname)"" /etc/sysconfig/network-scripts/ifcfg-eth0 #rclocal
+echo "" > /root/.bash_history #rclocal
+sed -i "/rclocal/d" /etc/rc.d/rc.local
+touch /var/lock/subsys/local

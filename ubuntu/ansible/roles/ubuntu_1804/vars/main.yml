@@ -1,0 +1,32 @@
+---
+
+cloud_init_packages:
+  - cloud-init                                                               
+  - cloud-initramfs-growroot                                                 
+  - cloud-initramfs-rescuevol                                                
+  - cloud-utils                                                              
+  - unattended-upgrades                                                      
+  - python-openssl                                                           
+  - libssl1.0.0         
+
+removed_files:                                                                 
+  - /etc/dpkg/dpkg.cfg.d/multiarch                                             
+  - /etc/udev/rules.d/70-persistent-net.rules                                  
+  - /lib/udev/rules.d/75-persistent-net-generator.rules                        
+  - /lib/udev/write_net_rules  
+
+pci_modules:                                                                   
+  - acpiphp                                                                    
+  - pci_hotplug                                                                
+
+support_packages:
+  - vim
+  - curl
+  - byobu
+  - qemu-guest-agent
+  - python-dev
+  - build-essential
+  - python-configobj
+  - python-setuptools
+
+ipv6_enabled: False

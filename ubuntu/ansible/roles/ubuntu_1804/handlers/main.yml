@@ -1,0 +1,11 @@
+---
+
+- name: update timezone
+  command: dpkg-reconfigure --frontend noninteractive tzdata         
+
+- name: update grub
+  command: update-{{ item }}
+  with_items:
+    - grub
+    - grub2
+

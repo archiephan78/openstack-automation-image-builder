@@ -1,0 +1,48 @@
+{
+    "variables": {
+        "user": "root",
+        "password": "rootcloud",
+        "disk_size": "3200"
+    },
+
+    "builders":
+    [
+        {
+            "name": "rhel-7",
+
+            "type": "qemu",
+            "qemuargs": [
+                ["-m", "1024M"],
+                ["-nographic"]
+            ],
+            "format": "raw",
+            "accelerator": "kvm",
+            "disk_size": "{{ user `disk_size`}}",
+
+	    "iso_url": "isos/rhel-7.2.iso",
+            "iso_checksum": "51e013512f489203a923a716b408fbdf",
+            "vnc_bind_address": "0.0.0.0",
+            "iso_checksum_type": "md5",
+
+            "http_directory": "http",
+
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "init 0",
+
+            "boot_wait": "5s",
+            "boot_command": [
+                "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks_7.cfg<enter><wait>"
+            ]
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "execute_command": "{{.Vars}} bash '{{.Path}}'",
+            "script": "scripts/setup_rhel.sh"
+        }
+    ]
+}
